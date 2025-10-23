@@ -1,75 +1,38 @@
-import { FileTextIcon, DownloadIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+// src/components/LogsView.tsx
+import React, { useMemo, useState } from 'react';
 
-export function LogsView() {
-  const mockLogs = [
-    { id: 1, timestamp: new Date().toISOString(), level: 'info', message: 'Test initiated for https://example.com' },
-    { id: 2, timestamp: new Date().toISOString(), level: 'warning', message: 'Potential XSS vulnerability detected' },
-    { id: 3, timestamp: new Date().toISOString(), level: 'error', message: 'Connection timeout on endpoint /api/users' },
-    { id: 4, timestamp: new Date().toISOString(), level: 'info', message: 'Scan completed successfully' },
-  ];
+type Log = { ts: string; level: 'INFO'|'WARN'|'ERROR'; msg: string };
+type Props = { logs?: Log[] };
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'error':
-        return 'text-error';
-      case 'warning':
-        return 'text-warning';
-      case 'info':
-        return 'text-accent';
-      default:
-        return 'text-gray-400';
-    }
-  };
+const DEFAULT_LIMIT = 400;
+
+function LogsViewImpl({ logs = [] }: Props) {
+  const [limit, setLimit] = useState(DEFAULT_LIMIT);
+  const visible = useMemo(() => logs.slice(0, limit), [logs, limit]);
+  const hasMore = logs.length > limit;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <h2 className="text-3xl font-heading font-semibold text-hero-text flex items-center gap-3">
-            <FileTextIcon className="w-8 h-8" strokeWidth={1.5} />
-            Test Logs
-          </h2>
-          <p className="text-lg text-gray-300">
-            Detailed execution logs and system messages
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          className="bg-transparent border-border text-foreground hover:bg-primary hover:text-primary-foreground font-normal"
-        >
-          <DownloadIcon className="w-5 h-5 mr-2" strokeWidth={1.5} />
-          Export Logs
-        </Button>
-      </div>
-
-      <Card className="bg-card border-border">
-        <CardHeader>
-          <CardTitle className="text-card-foreground">Recent Activity</CardTitle>
-          <CardDescription className="text-gray-300">
-            System logs from recent test executions
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3 font-mono text-sm">
-            {mockLogs.map((log) => (
-              <div
-                key={log.id}
-                className="p-4 bg-primary rounded-lg border border-border flex items-start gap-4"
-              >
-                <span className="text-gray-400 whitespace-nowrap">
-                  {new Date(log.timestamp).toLocaleTimeString()}
-                </span>
-                <span className={`uppercase font-semibold ${getLevelColor(log.level)} min-w-20`}>
-                  [{log.level}]
-                </span>
-                <span className="text-primary-foreground flex-1">{log.message}</span>
-              </div>
-            ))}
+    <section aria-labelledby="logs-title" className="space-y-4">
+      <h2 id="logs-title" className="text-xl font-semibold">Logs</h2>
+      <div className="rounded-md border bg-white p-3 font-mono text-sm overflow-auto max-h-[70vh]">
+        {visible.map((l, i) => (
+          <div key={i} className="whitespace-pre-wrap">
+            [{l.ts}] {l.level}: {l.msg}
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        ))}
+        {hasMore && (
+          <div className="pt-3">
+            <button
+              type="button"
+              className="rounded-md border px-3 py-1"
+              onClick={() => setLimit(limit + DEFAULT_LIMIT)}
+            >
+              Show more
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
+export const LogsView = React.memo(LogsViewImpl);
