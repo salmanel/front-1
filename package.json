@@ -12,9 +12,15 @@
     "test:ui": "playwright test"
   },
   "dependencies": {
+    "@radix-ui/react-toast": "^1.2.15",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dompurify": "^3.1.6",
+    "lucide-react": "^0.546.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "dompurify": "^3.1.6"
+    "tailwind-merge": "^3.3.1",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.2",
@@ -30,6 +36,7 @@
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "vite": "^5.4.10",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }
